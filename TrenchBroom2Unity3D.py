@@ -7,7 +7,7 @@ bl_info = {
 import bpy
 
 
-class ObjectMoveX(bpy.types.Operator):
+class Trenchbroom2Unity3D(bpy.types.Operator):
     """Trenchbroom2Unity3D"""      # Use this as a tooltip for menu items and buttons.
     bl_idname = "object.trenchbroom2unity"        # Unique identifier for buttons and menu items to reference.
     bl_label = "Trenchbroom2Unity3D"         # Display name in the interface.
