@@ -7,7 +7,7 @@ bl_info = {
 import bpy
 
 
-class Trenchbroom2Unity3D(bpy.types.Operator):
+class ObjectMoveX(bpy.types.Operator):
     """Trenchbroom2Unity3D"""      # Use this as a tooltip for menu items and buttons.
     bl_idname = "object.trenchbroom2unity"        # Unique identifier for buttons and menu items to reference.
     bl_label = "Trenchbroom2Unity3D"         # Display name in the interface.
@@ -18,14 +18,27 @@ class Trenchbroom2Unity3D(bpy.types.Operator):
         # The original script
         lastName = ""
         scene = bpy.context.scene
+        texturesToSkip = ["clip", "lampbulb", "crate01", "crate02", "crate03", "barrel01", "barrel02", "barrel03", "barrel_top01", "box01", "box02", "box03", "box04", "box05", "crate1", "crate2"]
         for obj in scene.objects:
                 if obj.type == 'MESH':
                     temp = obj.name.split("_")
                     if(temp[0] == lastName):
                         print("Merge ", lastName, " with ", obj.name)
-                        obj.select_set(True)
-                        print(bpy.context.selected_objects)
-                        bpy.ops.object.join()
+                        mesh = obj.data
+                        skip = False
+
+                        for f in mesh.polygons:  # iterate over faces
+                            slot = obj.material_slots[f.material_index]
+                            mat = slot.material
+                            if mat is not None:
+                                #print(mat.name)
+                                if(mat.name in texturesToSkip):
+                                    skip = True
+                        
+                        if(skip == False):
+                            obj.select_set(True)
+                            print(bpy.context.selected_objects)
+                            bpy.ops.object.join()
                     else:
                         print("Now joining ", temp[0])
                         bpy.ops.object.select_all(action='DESELECT')
@@ -36,14 +49,14 @@ class Trenchbroom2Unity3D(bpy.types.Operator):
         return {'FINISHED'}            # Lets Blender know the operator finished successfully.
 
 def menu_func(self, context):
-    self.layout.operator(Trenchbroom2Unity3D.bl_idname)
+    self.layout.operator(ObjectMoveX.bl_idname)
 
 def register():
-    bpy.utils.register_class(Trenchbroom2Unity3D)
+    bpy.utils.register_class(ObjectMoveX)
     bpy.types.VIEW3D_MT_object.append(menu_func)
 
 def unregister():
-    bpy.utils.unregister_class(Trenchbroom2Unity3D)
+    bpy.utils.unregister_class(ObjectMoveX)
 
 
 # This allows you to run the script directly from Blender's Text editor
